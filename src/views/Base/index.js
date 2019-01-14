@@ -4,6 +4,8 @@ import Carousels from './Carousels';
 import Collapses from './Collapses';
 import Dropdowns from './Dropdowns';
 import Forms from './Forms';
+import Registro from './Registro-estudiante';
+import Busqueda from './Buscar-estudiante';
 import Jumbotrons from './Jumbotrons';
 import ListGroups from './ListGroups';
 import Navbars from './Navbars';

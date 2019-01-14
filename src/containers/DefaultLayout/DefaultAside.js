@@ -235,7 +235,7 @@ class DefaultAside extends Component {
             </div>
           </TabPane>
           <TabPane tabId="3" className="p-3">
-            <h6>Settings</h6>
+            {/* <h6>Settings</h6> */}
 
             <div className="aside-options">
               <div className="clearfix mt-4">
