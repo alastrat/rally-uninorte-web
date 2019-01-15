@@ -11,7 +11,11 @@ import {
   Input,
   Label,
   Row,
-  Table
+  Table,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from 'reactstrap';
 import axios from 'axios';
 
@@ -29,7 +33,8 @@ class Forms extends Component {
       viewTable: false,
       studentCode: '',
       studentsList: [],
-      studentsCount: 0
+      studentsCount: 0,
+      checkedStudent: null,
     };
   }
 
@@ -69,7 +74,19 @@ class Forms extends Component {
     // console.log('-students-> ', students)
   }
 
+  handleConfirmCheck = codigo => async () => {
+    const { student } = await axios.post('http://localhost:8001/checkin-student', { codigo })
+      .then(res => res.data)
+      .catch(e => e);
+    this.setState({ checkedStudent: student });
+  };
+
+  toggleModal = () => {
+    this.setState({ checkedStudent: null });
+  };
+
   render() {
+    const { checkedStudent } = this.state;
     return (
       <div className="animated fadeIn">
         <Row>
@@ -114,7 +131,7 @@ class Forms extends Component {
                         <th>Tipo Doc</th>
                         <th>No. Doc</th>
                         <th>Programa</th>
-                        <th>Check</th>
+                        <th>Asistencia</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -128,10 +145,10 @@ class Forms extends Component {
                           <td>{student.no_doc}</td>
                           <td>{student.programa}</td>
                           <td>
-                            <Col col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">
+                            {student.asistencia && <Col col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">
                               <Button active block color="info" aria-pressed="true">✔</Button>
-                            </Col>
-                            {/* <Badge color="danger">Confirmar Asistencia</Badge> */}
+                            </Col>}
+                            {!student.asistencia && <Button block color="danger" onClick={this.handleConfirmCheck(student.codigo)}>Confirmar</Button>}
                           </td>
                         </tr>
                       )}
@@ -154,6 +171,13 @@ class Forms extends Component {
             </Col>
           </Row>
         }
+        <Modal isOpen={Boolean(checkedStudent)} toggle={this.toggleModal}>
+          <ModalHeader>Checkin</ModalHeader>
+          <ModalBody>{checkedStudent && checkedStudent.equipo}</ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={this.toggleModal}>Cerrar</Button>
+          </ModalFooter>
+        </Modal>
       </div>
     );
   }
