@@ -117,7 +117,6 @@ class Forms extends Component {
   render() {  
     const {
       checkedStudent,
-      success,
       codigo, apellidos, no_doc
     } = this.state;
     return (
