@@ -172,7 +172,7 @@ class Forms extends Component {
                 </Form>
               </CardBody>
               <CardFooter>
-                <Button type="submit" size="sm" color="primary" onClick={this.handelSubmit}><i className="fa fa-dot-circle-o"></i> Submit</Button>
+                <Button type="submit" size="sm" color="primary" onClick={this.handelSubmit}><i className="fa fa-dot-circle-o"></i> Crear</Button>
               </CardFooter>
             </Card>
           </Col>

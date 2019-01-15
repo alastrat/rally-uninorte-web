@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import {
-  Badge,
   Button,
   Card,
   CardBody,
   CardHeader,
+  CardFooter,
   Col,
   Form,
   FormGroup,
@@ -21,8 +21,6 @@ import axios from 'axios';
 
 const host = 'http://54.91.128.11:8000' // AWS
 // const host = 'http://localhost:8001' // Localhost
-let searchQuery;
-
 class Forms extends Component {
   constructor(props) {
     super(props);
@@ -38,6 +36,10 @@ class Forms extends Component {
       studentsList: [],
       studentsCount: 0,
       checkedStudent: null,
+      codigo: '',
+      apellidos: '',
+      tipo_doc: '',
+      no_doc: ''
     };
   }
 
@@ -49,11 +51,18 @@ class Forms extends Component {
     this.setState((prevState) => { return { fadeIn: !prevState } });
   }
 
-  handleStudentCodeOnChange = () => async (e) => {
+  handleStudentCodeOnSubmit = async () => {
     let studentsList, studentsCount, viewTable;
-    this.setState({ studentCode: e.target.value });
-    searchQuery = e.target.value;
-    const { students } = await axios.get(`${host}/find-students?codigo=${searchQuery}`)
+    const {
+      codigo, apellidos, no_doc
+    } = this.state;   
+    let searchQuery;
+
+    if(codigo) searchQuery =`codigo=${codigo}`;
+    if(apellidos) (searchQuery)? searchQuery+=`&apellidos=${apellidos}`: searchQuery =`apellidos=${apellidos}`;
+    if(no_doc) (searchQuery)? searchQuery+=`&no_doc=${no_doc}`: searchQuery= `no_doc=${no_doc}`;
+    
+    const { students } = await axios.get(`${host}/find-students?${searchQuery}`)
       .then(res => res.data)
       .catch(e => e);
 
@@ -68,15 +77,28 @@ class Forms extends Component {
     }
 
     this.setState({ studentsList, studentsCount, viewTable })
-  }
+  };
 
-  handleConfirmCheck = codigo => async () => {
+  handleChange = ({ target: { name, value } }) => this.setState({ [name]: value });
+
+  handleConfirmCheck = paramCode => async () => {
     let studentsList;
-    const { student } = await axios.post(`${host}/checkin-student`, { codigo })
+
+    const { student } = await axios.post(`${host}/checkin-student`, { codigo: paramCode })
       .then(res => res.data)
       .catch(e => e);
     this.setState({ checkedStudent: student });
-    const { students } = await axios.get(`${host}/find-students?codigo=${searchQuery}`)
+
+    const {
+      codigo, apellidos, no_doc
+    } = this.state;   
+    let searchQuery;
+
+    if(codigo) searchQuery =`codigo=${codigo}`;
+    if(apellidos) (searchQuery)? searchQuery+=`&apellidos=${apellidos}`: searchQuery =`apellidos=${apellidos}`;
+    if(no_doc) (searchQuery)? searchQuery+=`&no_doc=${no_doc}`: searchQuery= `no_doc=${no_doc}`;
+    
+    const { students } = await axios.get(`${host}/find-students?${searchQuery}`)
       .then(res => res.data)
       .catch(e => e);
     if (!!students) {
@@ -92,8 +114,12 @@ class Forms extends Component {
     this.setState({ checkedStudent: null });
   };
 
-  render() {
-    const { checkedStudent } = this.state;
+  render() {  
+    const {
+      checkedStudent,
+      success,
+      codigo, apellidos, no_doc
+    } = this.state;
     return (
       <div className="animated fadeIn">
         <Row>
@@ -103,13 +129,49 @@ class Forms extends Component {
                 <strong>Buscar</strong> Estudiantes
               </CardHeader>
               <CardBody>
-                <Form action="" method="post" inline>
-                  <FormGroup className="pr-1">
-                    <Label htmlFor="codigo" className="pr-1">Código</Label>
-                    <Input type="text" id="codigo" value={this.state.studentCode} onChange={this.handleStudentCodeOnChange()} placeholder="Ingrese código del estudiante" required />
+                <Form action="" method="post" encType="multipart/form-data" className="form-horizontal">
+                  <FormGroup row>
+                    <Col md="2">
+                      <Label htmlFor="codigo">Código</Label>
+                    </Col>
+                    <Col xs="12" md="10" lg="4">
+                      <Input type="number" id="codigo" name="codigo" value={codigo} onChange={this.handleChange} />
+                    </Col>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Col md="2">
+                      <Label htmlFor="apellidos">Apellidos</Label>
+                    </Col>
+                    <Col xs="12" md="10" lg="4">
+                      <Input type="text" id="apellidos" name="apellidos" value={apellidos} onChange={this.handleChange} />
+                    </Col>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Col md="2">
+                      <Label>Tipo de documento</Label>
+                    </Col>
+                    <Col md="10" lg="4" className="d-flex justify-content-around">
+                      <FormGroup check className="radio">
+                        <Input className="form-check-input" type="radio" id="tipo_doc_cc" name="tipo_doc" value="CC" onChange={this.handleChange} />
+                        <Label check className="form-check-label" htmlFor="tipo_doc_cc">Cédula</Label>
+                      </FormGroup>
+                      <FormGroup check className="radio d-inline-flex">
+                        <Input className="form-check-input" type="radio" id="tipo_doc_ti" name="tipo_doc" value="TI" onChange={this.handleChange} />
+                        <Label check className="form-check-label" htmlFor="tipo_doc_ti">Tarjeta de Identidad</Label>
+                      </FormGroup>
+                    </Col>
+                    <Col md="2">
+                      <Label htmlFor="no_doc">Número de documento</Label>
+                    </Col>
+                    <Col xs="12" md="10" lg="4">
+                      <Input type="text" id="no_doc" name="no_doc" value={no_doc} onChange={this.handleChange} />
+                    </Col>
                   </FormGroup>
                 </Form>
               </CardBody>
+              <CardFooter>
+                <Button type="submit" size="sm" color="primary" onClick={this.handleStudentCodeOnSubmit}><i className="fa fa-dot-circle-o"></i> Buscar</Button>
+              </CardFooter>
             </Card>
           </Col>
         </Row>
