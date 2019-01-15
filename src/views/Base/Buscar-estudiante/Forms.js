@@ -18,6 +18,8 @@ import {
 } from 'reactstrap';
 import axios from 'axios';
 
+const host = 'http://54.91.128.11:8000' // AWS
+// const host = 'http://localhost:8001' // Localhost
 
 class Forms extends Component {
   constructor(props) {
@@ -48,7 +50,7 @@ class Forms extends Component {
   handleStudentCodeOnChange = () => async (e) => {
     let studentsList, studentsCount, viewTable;
     this.setState({ studentCode: e.target.value });
-    const { students } = await axios.get(`http://localhost:8001/find-students?codigo=${e.target.value}`)
+    const { students } = await axios.get(`${host}/find-students?codigo=${e.target.value}`)
       .then(res => res.data)
       .catch(e => e);
 
@@ -66,7 +68,7 @@ class Forms extends Component {
   }
 
   handleConfirmCheck = codigo => async () => {
-    const { student } = await axios.post('http://localhost:8001/checkin-student', { codigo })
+    const { student } = await axios.post(`${host}/checkin-student`, { codigo })
       .then(res => res.data)
       .catch(e => e);
     this.setState({ checkedStudent: student });

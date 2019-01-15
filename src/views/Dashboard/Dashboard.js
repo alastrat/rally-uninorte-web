@@ -9,6 +9,10 @@ import {
   Table,
 } from 'reactstrap';
 
+import axios from 'axios';
+const host = 'http://54.91.128.11:8000' // AWS
+// const host = 'http://localhost:8001' // Localhost
+
 // Main Chart
 
 //Random Numbers
@@ -37,7 +41,9 @@ class Dashboard extends Component {
     this.state = {
       dropdownOpen: false,
       radioSelected: 2,
+      teams: []
     };
+    this.fetchTeamsInfo();
   }
 
   toggle() {
@@ -50,6 +56,13 @@ class Dashboard extends Component {
     this.setState({
       radioSelected: radioSelected,
     });
+  }
+
+  async fetchTeamsInfo() {
+    const { equipos } = await axios.post(`${host}/results-teams`)
+      .then(res => res.data)
+      .catch(e => e);
+    this.setState({ teams: equipos })
   }
 
   loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
@@ -67,38 +80,41 @@ class Dashboard extends Component {
               <CardBody>
                 <Table hover responsive className="table-outline mb-0 d-none d-sm-table">
                   <thead className="thead-light">
-                  <tr>
-                    <th className="text-center"><i className="icon-people"></i></th>
-                    <th>Color</th>
-                    <th>Relación %</th>
-                    <th>Estudiantes</th>
-                  </tr>
+                    <tr>
+                      <th className="text-center"><i className="icon-people"></i></th>
+                      <th>Color</th>
+                      <th>Relación %</th>
+                      <th>Estudiantes</th>
+                    </tr>
                   </thead>
                   <tbody>
-                    {}
-                  <tr>
-                    <td className="text-center">
-                      <div className="avatar">
-                        <img src={'assets/img/avatars/1.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
-                        <span className="avatar-status badge-success"></span>
-                      </div>
-                    </td>
-                    <td>
-                      <div>Yiorgos Avraamu</div>
-                    </td>
-                    <td>
-                      <div className="clearfix">
-                        <div className="float-left">
-                          <strong>50%</strong>
-                        </div>
-                      </div>
-                      <Progress className="progress-xs" color="success" value="50" />
-                    </td>
-                    <td>
-                      <div className="small text-muted">Last login</div>
-                      <strong>10 sec ago</strong>
-                    </td>
-                  </tr>                 
+                    {this.state.teams.map(team => (
+                      <tr
+                      key={team._id}
+                      >
+                        <td className="text-center">
+                          <div className="avatar">
+                            <img src={team.identifier} className="img-avatar" alt="admin@bootstrapmaster.com" />
+                            <span className="avatar-status badge-success"></span>
+                          </div>
+                        </td>
+                        <td>
+                          <div>{team.name}</div>
+                        </td>
+                        <td>
+                          <div className="clearfix">
+                            <div className="float-left">
+                              <strong>{team.ratio*100}%</strong>
+                            </div>
+                          </div>
+                          <Progress className="progress-xs" color="success" value={team.members / 1600} />
+                        </td>
+                        <td>
+                          <div className="small text-muted">Last login</div>
+                          <strong>{team.members}</strong>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </Table>
               </CardBody>
