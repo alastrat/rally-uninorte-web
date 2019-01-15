@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import {
   Button,
   Card,
@@ -12,29 +13,87 @@ import {
   Label,
   Row,
 } from 'reactstrap';
+import axios from 'axios';
+
+const programas = [
+  { id: 1, nombre: "Arquitectura" },
+  { id: 2, nombre: "Diseño Grafico" },
+  { id: 3, nombre: "Diseño Industrial" },
+  { id: 4, nombre: "Matematicas" },
+  { id: 5, nombre: "Geologia" },
+  { id: 6, nombre: "Medicina" },
+  { id: 7, nombre: "Enfermeria" },
+  { id: 8, nombre: "Odontologia" },
+  { id: 9, nombre: "Derecho" },
+  { id: 10, nombre: "Ciencias Politicas y gobierno" },
+  { id: 11, nombre: "Relaciones Internacionales" },
+  { id: 12, nombre: "Licenciatura en Pedagogía Infantil " },
+  { id: 13, nombre: "Licenciatura en Matemáticas" },
+  { id: 14, nombre: "Licenciatura en Filosofía y Humanidades" },
+  { id: 15, nombre: "Negocios Internacionales" },
+  { id: 16, nombre: "Administración de Empresas" },
+  { id: 17, nombre: "Contaduría Pública" },
+  { id: 18, nombre: "Comunicación Social y Periodismo" },
+  { id: 19, nombre: "Economía" },
+  { id: 20, nombre: "Filosofía y Humanidades" },
+  { id: 21, nombre: "Psicología" },
+  { id: 22, nombre: "Ingeniería Civil" },
+  { id: 23, nombre: "Ingeniería de Sistemas y Computación" },
+  { id: 24, nombre: "Ingeniería Eléctrica" },
+  { id: 25, nombre: "Ingeniería Electrónica" },
+  { id: 26, nombre: "Ingeniería Industrial" },
+  { id: 27, nombre: "Ingeniería Mecánica" },
+  { id: 28, nombre: "Musica" }
+]
 
 class Forms extends Component {
-  constructor(props) {
-    super(props);
 
-    this.toggle = this.toggle.bind(this);
-    this.toggleFade = this.toggleFade.bind(this);
-    this.state = {
-      collapse: true,
-      fadeIn: true,
-      timeout: 300
-    };
-  }
+  state = {
+    success: false,
+    collapse: true,
+    fadeIn: true,
+    timeout: 300,
+    primer_nombre: '',
+    segundo_nombre: '',
+    apellidos: '',
+    tipo_doc: '',
+    no_doc: '',
+    programa: '',
+  };
 
-  toggle() {
+  toggle = () => {
     this.setState({ collapse: !this.state.collapse });
   }
 
-  toggleFade() {
+  toggleFade = () => {
     this.setState((prevState) => { return { fadeIn: !prevState } });
   }
 
+  handleChange = ({ target: { name, value } }) => this.setState({ [name]: value });
+
+  handelSubmit = async () => {
+    const {
+      codigo, primer_nombre, segundo_nombre, apellidos, tipo_doc, no_doc, programa
+    } = this.state;
+    console.log(this.state);
+    const { student } = await axios.post('http://localhost:8001/new-student', {
+      codigo, primer_nombre, segundo_nombre, apellidos, tipo_doc, no_doc, programa
+    })
+      .then(res => res.data)
+      .catch(e => e);
+    if (student) {
+      this.setState({ success: true });
+    }
+  };
+
   render() {
+    const {
+      success,
+      codigo, primer_nombre, segundo_nombre, apellidos, no_doc, programa
+    } = this.state;
+    if (success) {
+      return <Redirect to="/buscar-estudiante"/>
+    }
     return (
       <div className="animated fadeIn">
         <Row>
@@ -46,85 +105,71 @@ class Forms extends Component {
               <CardBody>
                 <Form action="" method="post" encType="multipart/form-data" className="form-horizontal">
                   <FormGroup row>
-                    <Col md="3">
-                      <Label htmlFor="text-input">Nombre</Label>
+                    <Col md="2">
+                      <Label htmlFor="codigo">Código</Label>
                     </Col>
-                    <Col xs="12" md="9">
-                      <Input type="text" id="text-input" name="text-input" />
-                    </Col>
-                  </FormGroup>
-                  <FormGroup row>
-                    <Col md="3">
-                      <Label htmlFor="text-input">Apellidos</Label>
-                    </Col>
-                    <Col xs="12" md="9">
-                      <Input type="text" id="text-input" name="text-input" />
+                    <Col xs="12" md="10" lg="4">
+                      <Input type="number" id="codigo" name="codigo" value={codigo} onChange={this.handleChange} />
                     </Col>
                   </FormGroup>
                   <FormGroup row>
-                    <Col md="3">
+                    <Col md="2">
+                      <Label htmlFor="primer_nombre">Primer Nombre</Label>
+                    </Col>
+                    <Col xs="12" md="10" lg="4">
+                      <Input type="text" id="primer_nombre" name="primer_nombre" value={primer_nombre} onChange={this.handleChange} />
+                    </Col>
+                    <Col md="2">
+                      <Label htmlFor="segundo_nombre">Segundo Nombre</Label>
+                    </Col>
+                    <Col xs="12" md="10" lg="4">
+                      <Input type="text" id="segundo_nombre" name="segundo_nombre" value={segundo_nombre} onChange={this.handleChange} />
+                    </Col>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Col md="2">
+                      <Label htmlFor="apellidos">Apellidos</Label>
+                    </Col>
+                    <Col xs="12" md="10">
+                      <Input type="text" id="apellidos" name="apellidos" value={apellidos} onChange={this.handleChange} />
+                    </Col>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Col md="2">
                       <Label>Tipo de documento</Label>
                     </Col>
-                    <Col md="9">
+                    <Col md="10" lg="4" className="d-flex justify-content-around">
                       <FormGroup check className="radio">
-                        <Input className="form-check-input" type="radio" id="radio1" name="radios" value="CC" />
-                        <Label check className="form-check-label" htmlFor="radio1">Cédula</Label>
+                        <Input className="form-check-input" type="radio" id="tipo_doc_cc" name="tipo_doc" value="CC" onChange={this.handleChange} />
+                        <Label check className="form-check-label" htmlFor="tipo_doc_cc">Cédula</Label>
                       </FormGroup>
-                      <FormGroup check className="radio">
-                        <Input className="form-check-input" type="radio" id="radio2" name="radios" value="TI" />
-                        <Label check className="form-check-label" htmlFor="radio2">Tarjeta de Identidad</Label>
+                      <FormGroup check className="radio d-inline-flex">
+                        <Input className="form-check-input" type="radio" id="tipo_doc_ti" name="tipo_doc" value="TI" onChange={this.handleChange} />
+                        <Label check className="form-check-label" htmlFor="tipo_doc_ti">Tarjeta de Identidad</Label>
                       </FormGroup>
+                    </Col>
+                    <Col md="2">
+                      <Label htmlFor="no_doc">Número de documento</Label>
+                    </Col>
+                    <Col xs="12" md="10" lg="4">
+                      <Input type="text" id="no_doc" name="no_doc" value={no_doc} onChange={this.handleChange} />
                     </Col>
                   </FormGroup>
                   <FormGroup row>
-                    <Col md="3">
-                      <Label htmlFor="text-input">Número de documento</Label>
+                    <Col md="2">
+                      <Label htmlFor="programa">Programa Académico</Label>
                     </Col>
-                    <Col xs="12" md="9">
-                      <Input type="text" id="text-input" name="text-input" />
-                    </Col>
-                  </FormGroup>
-                  <FormGroup row>
-                    <Col md="3">
-                      <Label htmlFor="select">Programa Académico</Label>
-                    </Col>
-                    <Col xs="12" md="9">
-                      <Input type="select" name="select" id="select">
-                        <option value="1">Arquitectura</option>
-                        <option value="2">Diseño Grafico</option>
-                        <option value="3">Diseño Industrial</option>
-                        <option value="4">Matematicas</option>
-                        <option value="5">Geologia</option>
-                        <option value="6">Medicina</option>
-                        <option value="7">Enfermeria</option>
-                        <option value="8">Odontologia</option>
-                        <option value="9">Derecho</option>
-                        <option value="10">Ciencias Politicas y gobierno</option>
-                        <option value="11">Relaciones Internacionales</option>
-                        <option value="12">Licenciatura en Pedagogía Infantil </option>
-                        <option value="13">Licenciatura en Matemáticas</option>
-                        <option value="14">Licenciatura en Filosofía y Humanidades</option>
-                        <option value="15">Negocios Internacionales</option>
-                        <option value="16">Administración de Empresas</option>
-                        <option value="17">Contaduría Pública</option>
-                        <option value="18">Comunicación Social y Periodismo</option>
-                        <option value="19">Economía</option>
-                        <option value="20">Filosofía y Humanidades</option>
-                        <option value="21">Psicología</option>
-                        <option value="22">Ingeniería Civil</option>
-                        <option value="23">Ingeniería de Sistemas y Computación</option>
-                        <option value="24">Ingeniería Eléctrica</option>
-                        <option value="25">Ingeniería Electrónica</option>
-                        <option value="26">Ingeniería Industrial</option>
-                        <option value="27">Ingeniería Mecánica</option>
-                        <option value="28">Musica</option>
+                    <Col xs="12" md="10">
+                      <Input type="select" name="programa" id="programa" value={programa} onChange={this.handleChange}>
+                        <option value="">Seleccione Programa...</option>
+                        {programas.map(p => <option key={p.id} value={p.nombre}>{p.nombre}</option>)}
                       </Input>
                     </Col>
                   </FormGroup>
                 </Form>
               </CardBody>
               <CardFooter>
-                <Button type="submit" size="sm" color="primary"><i className="fa fa-dot-circle-o"></i> Submit</Button>
+                <Button type="submit" size="sm" color="primary" onClick={this.handelSubmit}><i className="fa fa-dot-circle-o"></i> Submit</Button>
               </CardFooter>
             </Card>
           </Col>
