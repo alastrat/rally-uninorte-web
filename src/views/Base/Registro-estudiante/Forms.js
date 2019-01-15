@@ -46,6 +46,9 @@ const programas = [
   { id: 28, nombre: "Musica" }
 ]
 
+const host = 'http://54.91.128.11:8000' // AWS
+// const host = 'http://localhost:8001' // Localhost
+
 class Forms extends Component {
 
   state = {
@@ -76,7 +79,7 @@ class Forms extends Component {
       codigo, primer_nombre, segundo_nombre, apellidos, tipo_doc, no_doc, programa
     } = this.state;
     console.log(this.state);
-    const { student } = await axios.post('http://localhost:8001/new-student', {
+    const { student } = await axios.post(`${host}/new-student`, {
       codigo, primer_nombre, segundo_nombre, apellidos, tipo_doc, no_doc, programa
     })
       .then(res => res.data)

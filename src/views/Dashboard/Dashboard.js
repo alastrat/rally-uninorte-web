@@ -41,9 +41,11 @@ class Dashboard extends Component {
     this.state = {
       dropdownOpen: false,
       radioSelected: 2,
-      teams: []
+      teams: [],
+      studentsCount: 0
     };
     this.fetchTeamsInfo();
+    this.fetchStudentsInfo();
   }
 
   toggle() {
@@ -63,6 +65,13 @@ class Dashboard extends Component {
       .then(res => res.data)
       .catch(e => e);
     this.setState({ teams: equipos })
+  }
+
+  async fetchStudentsInfo() {
+    const { students } = await axios.get(`${host}/find-students?asistencia=true`)
+      .then(res => res.data)
+      .catch(e => e);
+    this.setState({ studentsCount: students.stats.registros })
   }
 
   loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
@@ -90,7 +99,7 @@ class Dashboard extends Component {
                   <tbody>
                     {this.state.teams.map(team => (
                       <tr
-                      key={team._id}
+                        key={team._id}
                       >
                         <td className="text-center">
                           <div className="avatar">
@@ -104,10 +113,10 @@ class Dashboard extends Component {
                         <td>
                           <div className="clearfix">
                             <div className="float-left">
-                              <strong>{team.ratio*100}%</strong>
+                              <strong>{team.ratio}%</strong>
                             </div>
                           </div>
-                          <Progress className="progress-xs" color="success" value={team.members / 1600} />
+                          <Progress className="progress-xs" color="success" value={team.members * 100 / this.state.studentsCount} />
                         </td>
                         <td>
                           <div className="small text-muted">Last login</div>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  Badge,
   Button,
   Card,
   CardBody,
@@ -20,6 +21,7 @@ import axios from 'axios';
 
 const host = 'http://54.91.128.11:8000' // AWS
 // const host = 'http://localhost:8001' // Localhost
+let searchQuery;
 
 class Forms extends Component {
   constructor(props) {
@@ -50,7 +52,8 @@ class Forms extends Component {
   handleStudentCodeOnChange = () => async (e) => {
     let studentsList, studentsCount, viewTable;
     this.setState({ studentCode: e.target.value });
-    const { students } = await axios.get(`${host}/find-students?codigo=${e.target.value}`)
+    searchQuery = e.target.value;
+    const { students } = await axios.get(`${host}/find-students?codigo=${searchQuery}`)
       .then(res => res.data)
       .catch(e => e);
 
@@ -68,10 +71,21 @@ class Forms extends Component {
   }
 
   handleConfirmCheck = codigo => async () => {
+    let studentsList;
     const { student } = await axios.post(`${host}/checkin-student`, { codigo })
       .then(res => res.data)
       .catch(e => e);
     this.setState({ checkedStudent: student });
+    const { students } = await axios.get(`${host}/find-students?codigo=${searchQuery}`)
+      .then(res => res.data)
+      .catch(e => e);
+    if (!!students) {
+      studentsList = students.students;
+    } else {
+      studentsList = [];
+    }
+
+    this.setState({ studentsList })
   };
 
   toggleModal = () => {
@@ -86,7 +100,7 @@ class Forms extends Component {
           <Col xs="12" md="12">
             <Card>
               <CardHeader>
-                <strong>Buscar</strong> Estudiantes {this.state.studentsCount}
+                <strong>Buscar</strong> Estudiantes
               </CardHeader>
               <CardBody>
                 <Form action="" method="post" inline>
@@ -104,8 +118,8 @@ class Forms extends Component {
             <Col>
               <Card>
                 <CardHeader>
-                  <i className="fa fa-align-justify"></i> Listado Estudiantes
-              </CardHeader>
+                  <i className="fa fa-align-justify"></i> Listado Estudiantes {this.state.studentsCount}
+                </CardHeader>
                 <CardBody>
                   <Table hover bordered striped responsive size="sm">
                     <thead>
@@ -117,6 +131,7 @@ class Forms extends Component {
                         <th>Tipo Doc</th>
                         <th>No. Doc</th>
                         <th>Programa</th>
+                        <th>Financiación</th>
                         <th>Asistencia</th>
                       </tr>
                     </thead>
@@ -130,9 +145,11 @@ class Forms extends Component {
                           <td>{student.tipo_doc}</td>
                           <td>{student.no_doc}</td>
                           <td>{student.programa}</td>
+                          <td>ICETEX</td>
                           <td>
                             {student.asistencia && <Col col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">
-                              <Button active block color="info" aria-pressed="true">✔</Button>
+                              {/* <Badge className="mr-1" href={`/#/estudiante/${student._id}`} color="success">✔</Badge> */}
+                              <Button active block color="success" aria-pressed="true">✔</Button>
                             </Col>}
                             {!student.asistencia && <Button block color="danger" onClick={this.handleConfirmCheck(student.codigo)}>Confirmar</Button>}
                           </td>
