@@ -60,15 +60,7 @@ class Forms extends Component {
 
     this.setState({ studentsList, studentsCount, viewTable })
   }
-
-  showStudentsList = () => async () => {
-    let studentsList, studentsCount, viewTable;
-    // const { students } = await axios.get(`http://localhost:8001/find-students?codigo=${this.state.studentCode}`)
-    //   .then(res => res.data)
-    //   .catch(e => e);
-    // console.log('-students-> ', students)
-  }
-
+  
   render() {
     return (
       <div className="animated fadeIn">
@@ -90,9 +82,6 @@ class Forms extends Component {
                   </FormGroup> */}
                 </Form>
               </CardBody>
-              <CardFooter>
-                <Button onClick={this.showStudentsList()} type="submit" size="sm" color="primary"><i className="fa fa-dot-circle-o"></i> Buscar</Button>
-              </CardFooter>
             </Card>
           </Col>
         </Row>
