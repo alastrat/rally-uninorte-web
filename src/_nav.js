@@ -4,14 +4,10 @@ export default {
       name: 'Dashboard',
       url: '/dashboard',
       icon: 'icon-speedometer',
-      badge: {
-        variant: 'info',
-        text: 'NEW',
-      },
     },
     {
       title: true,
-      name: 'Components',
+      name: 'Acciones',
       wrapper: {
         element: '',
         attributes: {},
