@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import {
   Button,
   Card,
@@ -48,6 +49,7 @@ const programas = [
 class Forms extends Component {
 
   state = {
+    success: false,
     collapse: true,
     fadeIn: true,
     timeout: 300,
@@ -80,14 +82,18 @@ class Forms extends Component {
       .then(res => res.data)
       .catch(e => e);
     if (student) {
-
+      this.setState({ success: true });
     }
   };
 
   render() {
     const {
+      success,
       codigo, primer_nombre, segundo_nombre, apellidos, no_doc, programa
     } = this.state;
+    if (success) {
+      return <Redirect to="/buscar-estudiante"/>
+    }
     return (
       <div className="animated fadeIn">
         <Row>
