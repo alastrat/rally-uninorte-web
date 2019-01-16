@@ -79,6 +79,10 @@ class Forms extends Component {
     this.setState({ studentsList, studentsCount, viewTable })
   };
 
+  handleFieldsCleaning = async () => {
+    this.setState({ codigo: '', apellidos: '', no_doc: '' })
+  };
+
   handleChange = ({ target: { name, value } }) => this.setState({ [name]: value });
 
   handleConfirmCheck = paramCode => async () => {
@@ -147,19 +151,6 @@ class Forms extends Component {
                   </FormGroup>
                   <FormGroup row>
                     <Col md="2">
-                      <Label>Tipo de documento</Label>
-                    </Col>
-                    <Col md="10" lg="4" className="d-flex justify-content-around">
-                      <FormGroup check className="radio">
-                        <Input className="form-check-input" type="radio" id="tipo_doc_cc" name="tipo_doc" value="CC" onChange={this.handleChange} />
-                        <Label check className="form-check-label" htmlFor="tipo_doc_cc">Cédula</Label>
-                      </FormGroup>
-                      <FormGroup check className="radio d-inline-flex">
-                        <Input className="form-check-input" type="radio" id="tipo_doc_ti" name="tipo_doc" value="TI" onChange={this.handleChange} />
-                        <Label check className="form-check-label" htmlFor="tipo_doc_ti">Tarjeta de Identidad</Label>
-                      </FormGroup>
-                    </Col>
-                    <Col md="2">
                       <Label htmlFor="no_doc">Número de documento</Label>
                     </Col>
                     <Col xs="12" md="10" lg="4">
@@ -169,7 +160,8 @@ class Forms extends Component {
                 </Form>
               </CardBody>
               <CardFooter>
-                <Button type="submit" size="sm" color="primary" onClick={this.handleStudentCodeOnSubmit}><i className="fa fa-dot-circle-o"></i> Buscar</Button>
+                <Button style={{marginRight: 20}} type="submit" size="sm" color="primary" onClick={this.handleStudentCodeOnSubmit}><i className="fa fa-dot-circle-o"></i> Buscar</Button>
+                <Button type="submit" size="sm" color="danger" onClick={this.handleFieldsCleaning}><i className="fa fa-dot-circle-o"></i> Borrar</Button>
               </CardFooter>
             </Card>
           </Col>
@@ -192,7 +184,7 @@ class Forms extends Component {
                         <th>Tipo Doc</th>
                         <th>No. Doc</th>
                         <th>Programa</th>
-                        <th>Financiación</th>
+                        <th>Financiamiento</th>
                         <th>Asistencia</th>
                       </tr>
                     </thead>
@@ -206,7 +198,7 @@ class Forms extends Component {
                           <td>{student.tipo_doc}</td>
                           <td>{student.no_doc}</td>
                           <td>{student.programa}</td>
-                          <td>ICETEX</td>
+                          <td>{student.financiamiento}</td>
                           <td>
                             {student.asistencia && <Col col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">
                               {/* <Badge className="mr-1" href={`/#/estudiante/${student._id}`} color="success">✔</Badge> */}
