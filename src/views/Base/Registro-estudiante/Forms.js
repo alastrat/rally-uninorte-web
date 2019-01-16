@@ -46,6 +46,11 @@ const programas = [
   { id: 28, nombre: "Musica" }
 ]
 
+const financiaciones = [
+  { id: 1, nombre: "Generacion E" },
+  { id: 2, nombre: "Otros Medios" },
+  { id: 3, nombre: "N/A" },
+]
 const host = 'http://54.91.128.11:8000' // AWS
 // const host = 'http://localhost:8001' // Localhost
 
@@ -62,6 +67,7 @@ class Forms extends Component {
     tipo_doc: '',
     no_doc: '',
     programa: '',
+    financiamiento: ''
   };
 
   toggle = () => {
@@ -76,11 +82,11 @@ class Forms extends Component {
 
   handelSubmit = async () => {
     const {
-      codigo, primer_nombre, segundo_nombre, apellidos, tipo_doc, no_doc, programa
+      codigo, primer_nombre, segundo_nombre, apellidos, tipo_doc, no_doc, programa, financiamiento
     } = this.state;
     console.log(this.state);
     const { student } = await axios.post(`${host}/new-student`, {
-      codigo, primer_nombre, segundo_nombre, apellidos, tipo_doc, no_doc, programa
+      codigo, primer_nombre, segundo_nombre, apellidos, tipo_doc, no_doc, programa, financiamiento
     })
       .then(res => res.data)
       .catch(e => e);
@@ -92,7 +98,7 @@ class Forms extends Component {
   render() {
     const {
       success,
-      codigo, primer_nombre, segundo_nombre, apellidos, no_doc, programa
+      codigo, primer_nombre, segundo_nombre, apellidos, no_doc, programa, financiamiento
     } = this.state;
     if (success) {
       return <Redirect to="/buscar-estudiante"/>
@@ -144,11 +150,23 @@ class Forms extends Component {
                     <Col md="10" lg="4" className="d-flex justify-content-around">
                       <FormGroup check className="radio">
                         <Input className="form-check-input" type="radio" id="tipo_doc_cc" name="tipo_doc" value="CC" onChange={this.handleChange} />
-                        <Label check className="form-check-label" htmlFor="tipo_doc_cc">Cédula</Label>
+                        <Label check className="form-check-label" htmlFor="tipo_doc_cc">CC</Label>
                       </FormGroup>
                       <FormGroup check className="radio d-inline-flex">
                         <Input className="form-check-input" type="radio" id="tipo_doc_ti" name="tipo_doc" value="TI" onChange={this.handleChange} />
-                        <Label check className="form-check-label" htmlFor="tipo_doc_ti">Tarjeta de Identidad</Label>
+                        <Label check className="form-check-label" htmlFor="tipo_doc_ti">TI</Label>
+                      </FormGroup>
+                      <FormGroup check className="radio d-inline-flex">
+                        <Input className="form-check-input" type="radio" id="tipo_doc_rc" name="tipo_doc" value="TI" onChange={this.handleChange} />
+                        <Label check className="form-check-label" htmlFor="tipo_doc_rc">RC</Label>
+                      </FormGroup>
+                      <FormGroup check className="radio d-inline-flex">
+                        <Input className="form-check-input" type="radio" id="tipo_doc_ce" name="tipo_doc" value="TI" onChange={this.handleChange} />
+                        <Label check className="form-check-label" htmlFor="tipo_doc_ce">CE</Label>
+                      </FormGroup>
+                      <FormGroup check className="radio d-inline-flex">
+                        <Input className="form-check-input" type="radio" id="tipo_doc_ps" name="tipo_doc" value="TI" onChange={this.handleChange} />
+                        <Label check className="form-check-label" htmlFor="tipo_doc_ps">PS</Label>
                       </FormGroup>
                     </Col>
                     <Col md="2">
@@ -166,6 +184,17 @@ class Forms extends Component {
                       <Input type="select" name="programa" id="programa" value={programa} onChange={this.handleChange}>
                         <option value="">Seleccione Programa...</option>
                         {programas.map(p => <option key={p.id} value={p.nombre}>{p.nombre}</option>)}
+                      </Input>
+                    </Col>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Col md="2">
+                      <Label htmlFor="financiamiento">Tipo de Financiación</Label>
+                    </Col>
+                    <Col xs="12" md="10">
+                      <Input type="select" name="financiamiento" id="financiamiento" value={financiamiento} onChange={this.handleChange}>
+                        <option value="">Seleccione Financiación...</option>
+                        {financiaciones.map(f => <option key={f.id} value={f.nombre}>{f.nombre}</option>)}
                       </Input>
                     </Col>
                   </FormGroup>

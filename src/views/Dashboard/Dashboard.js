@@ -71,7 +71,10 @@ class Dashboard extends Component {
     const { students } = await axios.get(`${host}/find-students?asistencia=true`)
       .then(res => res.data)
       .catch(e => e);
-    this.setState({ studentsCount: students.stats.registros })
+      let studentsCount = 0
+      if (students) studentsCount = students.stats.registros;
+      
+    this.setState({ studentsCount })
   }
 
   loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
